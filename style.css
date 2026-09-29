@@ -7,11 +7,16 @@
     "wdth" 100;
 } */
 
-.html {
+html {
     font-family: "Roboto", sans-serif;
 }
 
+
+
+
 svg .land:hover {
-    fill: #efaf13;
+    fill: #dad7cd;
     cursor: pointer;
 }
+
+/* Earthy forest hues */
