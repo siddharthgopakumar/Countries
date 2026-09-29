@@ -31,4 +31,8 @@ svg .land.active:hover {
     fill: #344e41;
 }
 
+.individual-card {
+    height: 400px;
+}
+
 /* Earthy forest hues */
