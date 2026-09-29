@@ -11,12 +11,24 @@ html {
     font-family: "Roboto", sans-serif;
 }
 
-
-
+.land {
+    fill: #a3b18a;
+    stroke: #dad7cd;
+    stroke-width: 0.5;
+}
 
 svg .land:hover {
-    fill: #dad7cd;
+    fill: #588157;
     cursor: pointer;
+}
+
+svg .land.active:hover {
+    fill: #344e41;
+    cursor: pointer;
+}
+
+.active {
+    fill: #344e41;
 }
 
 /* Earthy forest hues */
