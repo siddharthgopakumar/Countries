@@ -89,7 +89,7 @@ const loadCountry = async (countryName) => {
     try {
         const response = await fetch(
             `https://api.restcountries.com/countries/v5?q=${countryName}`,
-            { headers: { 'Authorization': 'Bearer rc_live_c97cb9f938134735b174f098c64585d7' } }
+            { headers: {  } }
         );
 
         if (!response.ok) throw new Error('Country not found');

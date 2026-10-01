@@ -3,7 +3,7 @@ let selectedCountry = null;
 const countrySearch = async (countryName) => {
     const rawCountryData = await fetch(
         `https://api.restcountries.com/countries/v5?q=${countryName}`,
-        { headers: { 'Authorization': 'Bearer rc_live_c97cb9f938134735b174f098c64585d7' } }
+        { headers: {  } }
     )
     const data = await rawCountryData.json();
     let countryData = data.objects;
