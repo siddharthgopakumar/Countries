@@ -1,37 +1,43 @@
 let selectedCountry = null;
 
-let countrySearch = (countryName) => {
-    fetch(
+const countrySearch = async (countryName) => {
+    const rawCountryData = await fetch(
         `https://api.restcountries.com/countries/v5?q=${countryName}`,
         { headers: { 'Authorization': 'Bearer rc_live_c97cb9f938134735b174f098c64585d7' } }
     )
-        .then(function (response) { return response.json(); })
-        .then(function ({ data }) {
-            let countryData = data.objects;
-            // console.log(data);
-            let card = "";
-            countryData.forEach((country) => {
-                console.log(country);
-                card += createHTMLCard(country);
-            });
-            document.getElementById('card-container').innerHTML = card;
-        })
+    const data = await rawCountryData.json();
+    let countryData = data.objects;
+    let card = "";
+    countryData.forEach((country) => {
+        card += createHTMLCard(country);
+    });
+    document.getElementById('card-container').innerHTML = card;
 }
 
 // add cards
-let createHTMLCard = (countryData) => {
-    console.log({ countryData });
-    return `<div class="col-sx-12 col-sm-4 col-xxl-3">
-            <div class="individual-card card">
-                <img src="${countryData.flag.url_svg}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">${countryData.names.official}</h5>
-                    <p class="card-text">${countryData.descriptions.short}</p>
-                </div>
+const createHTMLCard = (countryData) => {
+    return `<a href="\search?${countryData.names.official}" class="text-decoration-none d-block col-sx-12 col-sm-6 col-md-4 col-xxl-3">
+    <div>
+        <div class="individual-card card">
+            <img src="${countryData.flag.url_svg}" class="card-img-top h-50" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">${countryData.names.official}</h5>
+                <p class="card-text">${countryData.descriptions.short}</p>
             </div>
-        </div>`
+        </div>
+    </div>
+</a>`
 }
 
+const addToURL = query => {
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.searchParams.set('country', query);
+    window.history.pushState({}, '', url);
+    countrySearch(query);
+}
+
+// initiator function
 (() => {
     document.querySelectorAll('.land').forEach((country) => {
         let selectedCountryName = "";
@@ -54,11 +60,11 @@ let createHTMLCard = (countryData) => {
         })
     })
 
-    document.getElementById('search-button').addEventListener('click', (e) => {
+    document.getElementById('search-input').addEventListener('keyup', (e) => {
         e.preventDefault();
         let countryName = document.getElementById('search-input').value;
         if (countryName) {
-            countrySearch(countryName);
+            addToURL(countryName);
         }
         selectedCountry.classList.remove('active');
         selectedCountry = null;
