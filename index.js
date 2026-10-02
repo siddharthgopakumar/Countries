@@ -1,22 +1,76 @@
+const searchInput = document.getElementById('search-input');
+const searchForm = document.getElementById('search-form');
 let selectedCountry = null;
 
-const countrySearch = async (countryName) => {
-    const rawCountryData = await fetch(
-        `https://api.restcountries.com/countries/v5?q=${countryName}`,
-        { headers: {  } }
-    )
-    const data = await rawCountryData.json();
-    let countryData = data.objects;
-    let card = "";
-    countryData.forEach((country) => {
-        card += createHTMLCard(country);
+const searchCountry = async (countryName) => {
+    const rawData = await fetch(`https://api.restcountries.com/countries/v5?q=${countryName}`, { headers: {} });
+    const rawCountryData = await rawData.json();
+    let countryData = rawCountryData.data.objects;
+    let cards = "";
+    console.log({ countryData });
+    countryData?.forEach((country) => {
+        cards += createHTMLCard(country);
     });
-    document.getElementById('card-container').innerHTML = card;
+    document.getElementById('card-container').innerHTML = cards;
 }
 
-// add cards
+
+const getCountryFromUrl = () => {
+    const parameters = new URLSearchParams(window.location.search);
+    const namedCountry = parameters.get('country');
+    if (namedCountry) return namedCountry.trim();
+}
+
+const initialCountryName = getCountryFromUrl();
+if (initialCountryName) {
+    searchInput.value = initialCountryName;
+    searchCountry(initialCountryName);
+}
+
+searchForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const countryName = searchInput.value.trim();
+    if (countryName) {
+        addToURL(countryName);
+        searchCountry(countryName);
+    }
+    selectedCountry.classList.remove('active');
+    selectedCountry = null;
+});
+
+document.querySelectorAll('.land').forEach((country) => {
+    let selectedCountryName = "";
+    country.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (country.classList.contains('active')) {
+            country.classList.remove('active');
+            searchInput.value = "";
+            selectedCountry = null;
+            return;
+        }
+        if (selectedCountry) {
+            selectedCountry.classList.remove('active');
+        }
+        country.classList.add('active');
+        selectedCountry = country;
+        selectedCountryName = country.getAttribute('title');
+        document.getElementById('search-input').value = selectedCountryName;
+        addToURL(selectedCountryName);
+        searchCountry(selectedCountryName);
+    })
+})
+
+const addToURL = query => {
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.searchParams.set('country', query);
+    window.history.pushState({}, '', url);
+}
+
 const createHTMLCard = (countryData) => {
-    return `<a href="\search?${countryData.names.official}" class="text-decoration-none d-block col-sx-12 col-sm-6 col-md-4 col-xxl-3">
+    return `<a href="\description?country=${countryData.names.official}" class="text-decoration-none d-block col-sx-12 col-sm-6 col-md-4 col-xxl-3">
     <div>
         <div class="individual-card card">
             <img src="${countryData.flag.url_svg}" class="card-img-top h-50" alt="...">
@@ -28,45 +82,3 @@ const createHTMLCard = (countryData) => {
     </div>
 </a>`
 }
-
-const addToURL = query => {
-    const url = new URL(window.location.href);
-    url.search = '';
-    url.searchParams.set('country', query);
-    window.history.pushState({}, '', url);
-    countrySearch(query);
-}
-
-// initiator function
-(() => {
-    document.querySelectorAll('.land').forEach((country) => {
-        let selectedCountryName = "";
-        country.addEventListener('click', () => {
-            if (country.classList.contains('active')) {
-                country.classList.remove('active');
-                document.getElementById('search-input').value = "";
-                selectedCountry = null;
-                return;
-            }
-            if (selectedCountry) {
-                selectedCountry.classList.remove('active');
-            }
-            country.classList.add('active');
-            selectedCountry = country;
-            selectedCountryName = country.getAttribute('title');
-            document.getElementById('search-input').value = selectedCountryName;
-            countrySearch(selectedCountryName);
-
-        })
-    })
-
-    document.getElementById('search-input').addEventListener('keyup', (e) => {
-        e.preventDefault();
-        let countryName = document.getElementById('search-input').value;
-        if (countryName) {
-            addToURL(countryName);
-        }
-        selectedCountry.classList.remove('active');
-        selectedCountry = null;
-    });
-})();

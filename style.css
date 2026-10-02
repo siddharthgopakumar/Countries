@@ -2,6 +2,10 @@ html {
     font-family: "Roboto", sans-serif;
 }
 
+#world-map {
+    max-width: 90%;
+}
+
 .land {
     fill: #a3b18a;
     stroke: #dad7cd;

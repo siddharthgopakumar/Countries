@@ -55,19 +55,19 @@ const renderCountry = (country) => {
     facts.className = 'country-facts';
 
     const description = document.createElement('p');
-    description.className = 'country-description fs-4';
+    description.className = 'country-description fs-6';
     description.textContent = country.descriptions.long || '';
 
     const currencies = Object.values(country.currencies || {})
         .map((currency) => `${currency.name}${currency.symbol ? ` (${currency.symbol})` : ''}`)
         .join(', ');
-    const languages = Object.values(country.languages || {}).join(', ');
-
+    const languages = country.languages ? country.languages?.map(language => language.name).join(', ') : 'Not available';
+    const capitals = country.capitals?.map(capital => capital.name).join(', ') || 'Not available';
     facts.append(
-        makeFact('Capital', country.capital?.join(', ')),
+        makeFact('Capital', capitals),
         makeFact('Region', country.subregion ? `${country.region}, ${country.subregion}` : country.region),
         makeFact('Population', formatNumber(country.population)),
-        makeFact('Area', formatNumber(country.area, ' km²')),
+        makeFact('Area', formatNumber(country.area.kilometers, ' km²')),
         makeFact('Languages', languages),
         makeFact('Currencies', currencies),
         makeFact('Bordering countries', country.borders?.join(', ') || 'None')
@@ -101,35 +101,16 @@ const loadCountry = async (countryName) => {
         countryStatus.textContent = '';
     } catch (error) {
         console.log({ error });
-        if (error.name === 'AbortError') return;
-        countryStatus.textContent = error.message === 'Country not found'
-            ? `No country found for “${countryName}”. Try another name.`
-            : 'Country data could not be loaded. Check your connection and try again.';
     }
 };
 
 loadCountry();
-
-searchForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const countryName = searchInput.value.trim();
-    if (!countryName) return;
-
-    const url = new URL(window.location.href);
-    url.search = '';
-    url.searchParams.set('country', countryName);
-    window.history.pushState({}, '', url);
-    loadCountry(countryName);
-});
 
 window.addEventListener('popstate', () => {
     const countryName = getCountryFromUrl();
     searchInput.value = countryName;
     if (countryName) {
         loadCountry(countryName);
-    } else {
-        countryDetails.replaceChildren();
-        countryStatus.textContent = 'Search for a country to see its details.';
     }
 });
 
