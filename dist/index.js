@@ -3,7 +3,10 @@ const searchForm = document.getElementById('search-form');
 let selectedCountry = null;
 
 const searchCountry = async (countryName) => {
-    const rawData = await fetch(`https://api.restcountries.com/countries/v5?q=${countryName}`, { headers: {} });
+    const rawData = await fetch(`/.netlify/functions/getCountries?countryName=${countryName}`, {
+        method: "GET",
+        headers: { accept: "application/json" }
+    });
     const rawCountryData = await rawData.json();
     let countryData = rawCountryData.data.objects;
     let cards = "";
