@@ -10,7 +10,6 @@ const searchCountry = async (countryName) => {
     const rawCountryData = await rawData.json();
     let countryData = rawCountryData.data.objects;
     let cards = "";
-    console.log({ countryData });
     countryData?.forEach((country) => {
         cards += createHTMLCard(country);
     });

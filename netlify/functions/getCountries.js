@@ -18,7 +18,7 @@ exports.handler = async (event, context) => {
             body: JSON.stringify(data),
         };
     } catch (error) {
-        console.log({ error });
+        console.error("Error fetching country data:", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ error: "Failed to fetch country data" }),

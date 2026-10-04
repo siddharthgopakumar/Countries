@@ -88,8 +88,10 @@ const loadCountry = async (countryName) => {
 
     try {
         const response = await fetch(
-            `https://api.restcountries.com/countries/v5?q=${countryName}`,
-            { headers: {  } }
+            `/.netlify/functions/getCountries?countryName=${countryName}`, {
+            method: "GET",
+            headers: { accept: "application/json" }
+        }
         );
 
         if (!response.ok) throw new Error('Country not found');
